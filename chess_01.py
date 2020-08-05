@@ -1,4 +1,5 @@
 import chess
+from utils.game_over import is_game_over
 from utils.score_1_pieces import evaluate
 from utils.search_1_minimax import selectmove
 
@@ -7,12 +8,9 @@ def next_move(board):
     # Get current player
     player = "White" if board.turn else "Black"
     print('Player: ', player)
-    
-    # Set default value for game finished
-    game_finished = False
-    
-    #make black search ahead more
-    depth = 0 if board.turn else 2
+
+    # Make black search ahead more
+    depth = 1 if board.turn else 2
     
     # Get move
     mov = selectmove(board, depth, evaluate)
@@ -20,20 +18,18 @@ def next_move(board):
     
     # Make move
     board.push(mov)
-    print ('Score: ', int(evaluate(board)))
-    print ()
     
-    # Check for checkmate ands stalemate
-    if board.is_checkmate():
-        print('Checkmate!!')
-        game_finished = True
-    if board.is_stalemate():
-        print('Stalemate')
-        game_finished = True
-        
-    # Print board
+    # Print board and score
+    print ('Score: ', int(evaluate(board)))
+    print ()    
     print (board)
     print ()
+    
+    # Check for end of game
+    game_finished, reason = is_game_over(board)    
+    if game_finished:
+        print ('GAME OVER!!!')
+        print (reason)
     
     # Return
     continue_game = not game_finished
@@ -41,12 +37,16 @@ def next_move(board):
     return continue_game
     
 
-
-CONTINUE = True
-board = chess.Board()
-while CONTINUE:
-    CONTINUE = next_move(board)
+def play_game():
+    """Game loop"""
+    CONTINUE = True
+    board = chess.Board()
+    while CONTINUE:
+        CONTINUE = next_move(board)
     
+    
+# Play game
+play_game()
     
 
 
